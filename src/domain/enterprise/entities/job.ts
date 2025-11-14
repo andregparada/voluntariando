@@ -37,6 +37,12 @@ export class Job extends Enitity<JobProps> {
     return this.props.description
   }
 
+  set description(description: string) {
+    this.props.description = description
+
+    this.touch()
+  }
+
   get createdAt() {
     return this.props.createdAt
   }

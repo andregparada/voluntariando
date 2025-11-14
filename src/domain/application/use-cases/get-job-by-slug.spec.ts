@@ -17,7 +17,7 @@ describe('Get job by slug', () => {
       slug: Slug.create('example-job'),
     })
 
-    await inMemoryJobsRepository.create(newJob)
+    inMemoryJobsRepository.create(newJob)
 
     const { job } = await sut.execute({
       slug: 'example-job',

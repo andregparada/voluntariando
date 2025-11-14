@@ -4,6 +4,10 @@ import { Job } from '@/domain/enterprise/entities/job'
 export class InMemoryJobsRepository implements JobsRepository {
   public items: Job[] = []
 
+  async create(job: Job) {
+    this.items.push(job)
+  }
+
   async findById(id: string) {
     const job = this.items.find((item) => item.id.toString() === id)
 
@@ -24,8 +28,10 @@ export class InMemoryJobsRepository implements JobsRepository {
     return job
   }
 
-  async create(job: Job) {
-    this.items.push(job)
+  async save(job: Job) {
+    const jobIndex = this.items.findIndex((item) => item.id === job.id)
+
+    this.items[jobIndex] = job
   }
 
   async delete(job: Job) {

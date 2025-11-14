@@ -20,7 +20,7 @@ describe('Delete job', () => {
       new UniqueEntityId('job-1'),
     )
 
-    await inMemoryJobsRepository.create(job)
+    inMemoryJobsRepository.create(job)
 
     await sut.execute({ ongId: 'ong-1', jobId: 'job-1' })
 
