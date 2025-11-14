@@ -2,6 +2,7 @@ import { InMemoryJobsRepository } from 'test/repositories/in-memory-jobs-reposit
 import { makeJob } from 'test/factories/make-job.js'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { DeleteVolunteerJobUseCase } from './delete-volunteer-job.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
 
 let inMemoryJobsRepository: InMemoryJobsRepository
 let sut: DeleteVolunteerJobUseCase
@@ -22,8 +23,9 @@ describe('Delete job', () => {
 
     inMemoryJobsRepository.create(job)
 
-    await sut.execute({ ongId: 'ong-1', jobId: 'job-1' })
+    const result = await sut.execute({ ongId: 'ong-1', jobId: 'job-1' })
 
+    expect(result.isRight()).toBe(true)
     expect(inMemoryJobsRepository.items).toHaveLength(0)
   })
 
@@ -35,10 +37,11 @@ describe('Delete job', () => {
       new UniqueEntityId('job-1'),
     )
 
-    await inMemoryJobsRepository.create(job)
+    inMemoryJobsRepository.create(job)
 
-    expect(() => {
-      return sut.execute({ ongId: 'ong-2', jobId: 'job-1' })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({ ongId: 'ong-2', jobId: 'job-1' })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })
