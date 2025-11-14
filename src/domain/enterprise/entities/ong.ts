@@ -60,7 +60,7 @@ export class Ong extends Enitity<OngProps> {
     const ong = new Ong(
       {
         ...props,
-        createdAt: new Date(),
+        createdAt: props.createdAt ?? new Date(),
       },
       id,
     )

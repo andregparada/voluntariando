@@ -1,3 +1,4 @@
+import { PaginationParams } from '@/core/repositories/pagination-params'
 import { JobsRepository } from '@/domain/application/repositories/jobs-repository'
 import { Job } from '@/domain/enterprise/entities/job'
 
@@ -26,6 +27,14 @@ export class InMemoryJobsRepository implements JobsRepository {
     }
 
     return job
+  }
+
+  async findManyRecent({ page }: PaginationParams) {
+    const jobs = this.items
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice((page - 1) * 20, page * 20)
+
+    return jobs
   }
 
   async save(job: Job) {
