@@ -2,6 +2,7 @@ import { InMemoryJobsRepository } from 'test/repositories/in-memory-jobs-reposit
 import { makeJob } from 'test/factories/make-job.js'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { EditVolunteerJobUseCase } from './edit-volunteer-job'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 let inMemoryJobsRepository: InMemoryJobsRepository
 let sut: EditVolunteerJobUseCase
@@ -19,13 +20,14 @@ describe('Edit job', () => {
 
     await inMemoryJobsRepository.create(job)
 
-    await sut.execute({
+    const result = await sut.execute({
       jobId: job.id.toValue(),
       ongId: 'ong-1',
       title: 'New title',
       description: 'New description',
     })
 
+    expect(result.isRight()).toBe(true)
     expect(inMemoryJobsRepository.items[0]).toMatchObject({
       title: 'New title',
       description: 'New description',
@@ -42,13 +44,14 @@ describe('Edit job', () => {
 
     await inMemoryJobsRepository.create(job)
 
-    expect(() => {
-      return sut.execute({
-        ongId: 'ong-2',
-        jobId: 'job-1',
-        title: 'New title',
-        description: 'New description',
-      })
-    }).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      ongId: 'ong-2',
+      jobId: 'job-1',
+      title: 'New title',
+      description: 'New description',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(NotAllowedError)
   })
 })

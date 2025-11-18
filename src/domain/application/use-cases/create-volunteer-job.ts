@@ -1,6 +1,7 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import type { JobsRepository } from '../repositories/jobs-repository.js'
 import { Job } from '@/domain/enterprise/entities/job.js'
+import { Either, right } from '@/core/either.js'
 
 interface CreateVolunteerJobUseCaseRequest {
   ongId: string
@@ -8,9 +9,12 @@ interface CreateVolunteerJobUseCaseRequest {
   description: string
 }
 
-interface CreateVolunteerJobUseCaseResponse {
-  job: Job
-}
+type CreateVolunteerJobUseCaseResponse = Either<
+  null,
+  {
+    job: Job
+  }
+>
 
 export class CreateVolunteerJobUseCase {
   constructor(private jobsRepository: JobsRepository) {}
@@ -28,6 +32,6 @@ export class CreateVolunteerJobUseCase {
 
     await this.jobsRepository.create(job)
 
-    return { job }
+    return right({ job })
   }
 }

@@ -1,4 +1,8 @@
+import { Either, left, right } from '@/core/either.js'
 import type { JobsRepository } from '../repositories/jobs-repository.js'
+import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
+import { NotAllowedError } from './errors/not-allowed-error.js'
+import { Job } from '@/domain/enterprise/entities/job.js'
 
 interface EditVolunteerJobUseCaseRequest {
   ongId: string
@@ -7,7 +11,12 @@ interface EditVolunteerJobUseCaseRequest {
   description: string
 }
 
-interface EditVolunteerJobUseCaseResponse {}
+type EditVolunteerJobUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  {
+    job: Job
+  }
+>
 
 export class EditVolunteerJobUseCase {
   constructor(private jobsRepository: JobsRepository) {}
@@ -21,11 +30,11 @@ export class EditVolunteerJobUseCase {
     const job = await this.jobsRepository.findById(jobId)
 
     if (!job) {
-      throw new Error('Job not found.')
+      return left(new ResourceNotFoundError())
     }
 
     if (job.ongId.toString() !== ongId) {
-      throw new Error('You are not allowed to edit this job.')
+      return left(new NotAllowedError())
     }
 
     job.title = title
@@ -33,6 +42,8 @@ export class EditVolunteerJobUseCase {
 
     await this.jobsRepository.save(job)
 
-    return {}
+    return right({
+      job,
+    })
   }
 }

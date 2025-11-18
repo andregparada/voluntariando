@@ -22,11 +22,12 @@ describe('Fetch recent jobs', () => {
       makeJob({ createdAt: new Date(2022, 0, 23) }),
     )
 
-    const { jobs } = await sut.execute({
+    const result = await sut.execute({
       page: 1,
     })
 
-    expect(jobs).toEqual([
+    expect(result.isRight()).toBe(true)
+    expect(result.value?.jobs).toEqual([
       expect.objectContaining({ createdAt: new Date(2022, 0, 23) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 20) }),
       expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
@@ -38,10 +39,10 @@ describe('Fetch recent jobs', () => {
       await inMemoryJobsRepository.create(makeJob())
     }
 
-    const { jobs } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
     })
 
-    expect(jobs).toHaveLength(2)
+    expect(result.value?.jobs).toHaveLength(2)
   })
 })

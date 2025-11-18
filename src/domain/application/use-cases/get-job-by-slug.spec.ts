@@ -19,11 +19,13 @@ describe('Get job by slug', () => {
 
     inMemoryJobsRepository.create(newJob)
 
-    const { job } = await sut.execute({
+    const result = await sut.execute({
       slug: 'example-job',
     })
 
-    expect(job.id).toBeTruthy()
-    expect(job.title).toEqual(newJob.title)
+    expect(result.isRight()).toBe(true)
+    expect(result.value).toMatchObject({
+      job: newJob,
+    })
   })
 })

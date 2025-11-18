@@ -11,13 +11,13 @@ describe('Create job', () => {
   })
 
   it('should be able to create a volunteer job', async () => {
-    const { job } = await sut.execute({
+    const result = await sut.execute({
       ongId: '1',
       title: 'Título da vaga',
       description: 'Descrição',
     })
 
-    expect(job.id).toBeTruthy()
-    expect(inMemoryJobsRepository.items[0].id).toEqual(job.id)
+    expect(result.isRight()).toBe(true)
+    expect(inMemoryJobsRepository.items[0]).toEqual(result.value?.job)
   })
 })
