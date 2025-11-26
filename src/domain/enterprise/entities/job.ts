@@ -1,11 +1,11 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id.js'
 import { Slug } from './value-objects/slug.js'
-import { Enitity } from '@/core/entities/entity.js'
+import { Entity } from '@/core/entities/entity.js'
 import { Optional } from '@/core/types/optional.js'
 import dayjs from 'dayjs'
 
 export interface JobProps {
-  ongId: UniqueEntityId
+  ongId: UniqueEntityID
   title: string
   slug: Slug
   description: string
@@ -13,7 +13,7 @@ export interface JobProps {
   updatedAt?: Date
 }
 
-export class Job extends Enitity<JobProps> {
+export class Job extends Entity<JobProps> {
   get ongId() {
     return this.props.ongId
   }
@@ -65,7 +65,7 @@ export class Job extends Enitity<JobProps> {
 
   static create(
     props: Optional<JobProps, 'createdAt' | 'slug'>,
-    id?: UniqueEntityId,
+    id?: UniqueEntityID,
   ) {
     const job = new Job(
       {

@@ -1,6 +1,6 @@
 import { InMemoryJobsRepository } from 'test/repositories/in-memory-jobs-repository.js'
 import { makeJob } from 'test/factories/make-job.js'
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id.js'
 import { EditVolunteerJobUseCase } from './edit-volunteer-job'
 import { NotAllowedError } from './errors/not-allowed-error'
 
@@ -15,7 +15,7 @@ describe('Edit job', () => {
 
   it('should be able to edit a volunteer job', async () => {
     const job = makeJob({
-      ongId: new UniqueEntityId('ong-1'),
+      ongId: new UniqueEntityID('ong-1'),
     })
 
     await inMemoryJobsRepository.create(job)
@@ -37,9 +37,9 @@ describe('Edit job', () => {
   it('should be not able to edit a job from another ong', async () => {
     const job = makeJob(
       {
-        ongId: new UniqueEntityId('ong-1'),
+        ongId: new UniqueEntityID('ong-1'),
       },
-      new UniqueEntityId('job-1'),
+      new UniqueEntityID('job-1'),
     )
 
     await inMemoryJobsRepository.create(job)

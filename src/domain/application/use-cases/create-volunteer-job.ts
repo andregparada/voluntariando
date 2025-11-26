@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id.js'
 import type { JobsRepository } from '../repositories/jobs-repository.js'
 import { Job } from '@/domain/enterprise/entities/job.js'
 import { Either, right } from '@/core/either.js'
@@ -25,7 +25,7 @@ export class CreateVolunteerJobUseCase {
     description,
   }: CreateVolunteerJobUseCaseRequest): Promise<CreateVolunteerJobUseCaseResponse> {
     const job = Job.create({
-      ongId: new UniqueEntityId(ongId),
+      ongId: new UniqueEntityID(ongId),
       title,
       description,
     })
