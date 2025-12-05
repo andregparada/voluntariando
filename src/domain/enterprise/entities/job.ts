@@ -4,11 +4,31 @@ import { Entity } from '@/core/entities/entity.js'
 import { Optional } from '@/core/types/optional.js'
 import dayjs from 'dayjs'
 
+enum JobType {
+  FIXED = 'fixed',
+  TEMPORARY = 'temporary',
+  ONE_TIME = 'one-time',
+}
+
+enum CommitmentFrequency {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  OCCASIONALLY = 'occasionally',
+  FLEXIBLE = 'flexible',
+}
+
 export interface JobProps {
   ongId: UniqueEntityID
   title: string
   slug: Slug
   description: string
+  causes: UniqueEntityID[]
+  skillsNeeded: UniqueEntityID[]
+  jobType: JobType
+  commitmentFrequency: CommitmentFrequency
+  startDate?: Date
+  endDate?: Date
   createdAt: Date
   updatedAt?: Date
 }
@@ -37,6 +57,14 @@ export class Job extends Entity<JobProps> {
     return this.props.description
   }
 
+  get causes() {
+    return this.props.causes
+  }
+
+  get skillsNeeded() {
+    return this.props.skillsNeeded
+  }
+
   set description(description: string) {
     this.props.description = description
 
@@ -56,7 +84,8 @@ export class Job extends Entity<JobProps> {
   }
 
   get excerpt() {
-    return this.description.substring(0, 120).trimEnd().concat('...')
+    if (this.description.length <= 120) return this.description
+    return this.description.substring(0, 120).trimEnd() + '...'
   }
 
   private touch() {
@@ -71,6 +100,8 @@ export class Job extends Entity<JobProps> {
       {
         ...props,
         slug: props.slug ?? Slug.createFromText(props.title),
+        causes: props.causes ?? [],
+        skillsNeeded: props.skillsNeeded ?? [],
         createdAt: props.createdAt ?? new Date(),
       },
       id,

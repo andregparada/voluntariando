@@ -3,17 +3,28 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 import { Address } from './value-objects/address'
 
-interface OngProps {
+export enum Availability {
+  FULL_TIME = 'full-time',
+  PART_TIME = 'part-time',
+  OCCASIONAL = 'occasional',
+  WEEKENDS_ONLY = 'weekends-only',
+  EVENINGS = 'evenings',
+  FLEXIBLE = 'flexible',
+}
+
+interface ApplicantProps {
   name: string
   email: string
   phoneNumber: string
   address: Address
-  about?: string
+  bio: string
+  skills: UniqueEntityID[]
+  availability: Availability
   createdAt: Date
   updatedAt?: Date
 }
 
-export class Ong extends Entity<OngProps> {
+export class Applicant extends Entity<ApplicantProps> {
   get name() {
     return this.props.name
   }
@@ -30,8 +41,16 @@ export class Ong extends Entity<OngProps> {
     return this.props.address
   }
 
-  get about() {
-    return this.props.about
+  get bio() {
+    return this.props.bio
+  }
+
+  get skills() {
+    return this.props.skills
+  }
+
+  get availability() {
+    return this.props.availability
   }
 
   get createdAt() {
@@ -46,15 +65,19 @@ export class Ong extends Entity<OngProps> {
     this.props.updatedAt = new Date()
   }
 
-  static create(props: Optional<OngProps, 'createdAt'>, id?: UniqueEntityID) {
-    const ong = new Ong(
+  static create(
+    props: Optional<ApplicantProps, 'createdAt' | 'skills'>,
+    id?: UniqueEntityID,
+  ) {
+    const applicant = new Applicant(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
+        skills: props.skills ?? [],
       },
       id,
     )
 
-    return ong
+    return applicant
   }
 }
