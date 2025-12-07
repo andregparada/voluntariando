@@ -15,10 +15,10 @@ export enum Availability {
 interface ApplicantProps {
   name: string
   email: string
-  phoneNumber: string
+  phoneNumber?: string
   address: Address
   bio: string
-  skills: UniqueEntityID[]
+  skills: UniqueEntityID[] // ??? Id ou Skill?
   availability: Availability
   createdAt: Date
   updatedAt?: Date
@@ -66,7 +66,7 @@ export class Applicant extends Entity<ApplicantProps> {
   }
 
   static create(
-    props: Optional<ApplicantProps, 'createdAt' | 'skills'>,
+    props: Optional<ApplicantProps, 'createdAt'>,
     id?: UniqueEntityID,
   ) {
     const applicant = new Applicant(

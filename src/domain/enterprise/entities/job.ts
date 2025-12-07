@@ -4,13 +4,13 @@ import { Entity } from '@/core/entities/entity.js'
 import { Optional } from '@/core/types/optional.js'
 import dayjs from 'dayjs'
 
-enum JobType {
+export enum JobType {
   FIXED = 'fixed',
   TEMPORARY = 'temporary',
   ONE_TIME = 'one-time',
 }
 
-enum CommitmentFrequency {
+export enum CommitmentFrequency {
   DAILY = 'daily',
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
@@ -23,7 +23,7 @@ export interface JobProps {
   title: string
   slug: Slug
   description: string
-  causes: UniqueEntityID[]
+  causes: UniqueEntityID[] /// ids ou causes
   skillsNeeded: UniqueEntityID[]
   jobType: JobType
   commitmentFrequency: CommitmentFrequency
