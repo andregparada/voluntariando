@@ -7,6 +7,10 @@ import {
   Job,
   JobType,
 } from '@/domain/enterprise/entities/job.js'
+import { CausesRepository } from '../repositories/causes-repository.js'
+import { Cause } from '@/domain/enterprise/entities/cause.js'
+import { SkillsRepository } from '../repositories/skills-repository.js'
+import { Skill } from '@/domain/enterprise/entities/skill.js'
 
 interface EditVolunteerJobUseCaseRequest {
   ongId: string
@@ -29,7 +33,11 @@ type EditVolunteerJobUseCaseResponse = Either<
 >
 
 export class EditVolunteerJobUseCase {
-  constructor(private jobsRepository: JobsRepository) {}
+  constructor(
+    private jobsRepository: JobsRepository,
+    private causesRepository: CausesRepository,
+    private skillsRepository: SkillsRepository,
+  ) {}
 
   async execute({
     ongId,
@@ -44,6 +52,42 @@ export class EditVolunteerJobUseCase {
     endDate,
   }: EditVolunteerJobUseCaseRequest): Promise<EditVolunteerJobUseCaseResponse> {
     const job = await this.jobsRepository.findById(jobId)
+
+    const causeIds = await Promise.all(
+      causeTitles.map(async (title) => {
+        const existingCause = await this.causesRepository.findByTitle(title)
+
+        if (existingCause) {
+          return existingCause.id // ??? retornar id
+        }
+
+        const newCause = Cause.create({
+          title,
+        })
+
+        await this.causesRepository.create(newCause)
+
+        return newCause.id // ??? retorn
+      }),
+    )
+
+    const skillIds = await Promise.all(
+      skillTitles.map(async (title) => {
+        const existingSkill = await this.skillsRepository.findByTitle(title)
+
+        if (existingSkill) {
+          return existingSkill.id
+        }
+
+        const newSkill = Skill.create({
+          title,
+        })
+
+        await this.skillsRepository.create(newSkill)
+
+        return newSkill.id // ??? retornar id
+      }),
+    )
 
     if (!job) {
       return left(new ResourceNotFoundError())
@@ -76,6 +120,11 @@ export class EditVolunteerJobUseCase {
     if (endDate !== undefined) {
       job.endDate = endDate
     }
+
+    job.updateCauses(causeIds)
+
+    job.updateSkills(skillIds)
+
     await this.jobsRepository.save(job)
 
     return right({

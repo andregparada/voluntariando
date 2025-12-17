@@ -107,8 +107,18 @@ export class Job extends Entity<JobProps> {
     return this.props.causes
   }
 
+  updateCauses(causeIds: UniqueEntityID[]) {
+    this.props.causes = causeIds
+    this.touch()
+  }
+
   get skillsNeeded() {
     return this.props.skillsNeeded
+  }
+
+  updateSkills(skillIds: UniqueEntityID[]) {
+    this.props.skillsNeeded = skillIds
+    this.touch()
   }
 
   get createdAt() {
