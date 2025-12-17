@@ -3,7 +3,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
 import { Address } from './value-objects/address'
 
-interface OngProps {
+export interface OngProps {
   name: string
   email: string
   phoneNumber: string

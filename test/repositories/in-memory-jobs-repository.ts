@@ -38,13 +38,17 @@ export class InMemoryJobsRepository implements JobsRepository {
   }
 
   async save(job: Job) {
-    const jobIndex = this.items.findIndex((item) => item.id === job.id)
+    const jobIndex = this.items.findIndex(
+      (item) => item.id.toString() === job.id.toString(),
+    )
 
     this.items[jobIndex] = job
   }
 
   async delete(job: Job) {
-    const itemIndex = this.items.findIndex((item) => item.id === job.id)
+    const itemIndex = this.items.findIndex(
+      (item) => item.id.toString() === job.id.toString(),
+    )
 
     this.items.splice(itemIndex, 1)
   }

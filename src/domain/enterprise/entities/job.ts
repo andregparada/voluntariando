@@ -23,14 +23,14 @@ export interface JobProps {
   title: string
   slug: Slug
   description: string
-  causes: UniqueEntityID[] /// ids ou causes
+  causes: UniqueEntityID[] /// ??? ids ou causes? devo chamar de causeIds?
   skillsNeeded: UniqueEntityID[]
   jobType: JobType
   commitmentFrequency: CommitmentFrequency
-  startDate?: Date
-  endDate?: Date
+  startDate: Date | null
+  endDate: Date | null
   createdAt: Date
-  updatedAt?: Date
+  updatedAt?: Date | null
 }
 
 export class Job extends Entity<JobProps> {
@@ -57,18 +57,58 @@ export class Job extends Entity<JobProps> {
     return this.props.description
   }
 
+  set description(description: string) {
+    this.props.description = description
+
+    this.touch()
+  }
+
+  get jobType() {
+    return this.props.jobType
+  }
+
+  set jobType(jobType: JobType) {
+    this.props.jobType = jobType
+
+    this.touch()
+  }
+
+  get commitmentFrequency() {
+    return this.props.commitmentFrequency
+  }
+
+  set commitmentFrequency(commitmentFrequency: CommitmentFrequency) {
+    this.props.commitmentFrequency = commitmentFrequency
+
+    this.touch()
+  }
+
+  get startDate() {
+    return this.props.startDate
+  }
+
+  set startDate(startDate: Date | null) {
+    this.props.startDate = startDate
+
+    this.touch()
+  }
+
+  get endDate() {
+    return this.props.endDate
+  }
+
+  set endDate(endDate: Date | null) {
+    this.props.endDate = endDate
+
+    this.touch()
+  }
+
   get causes() {
     return this.props.causes
   }
 
   get skillsNeeded() {
     return this.props.skillsNeeded
-  }
-
-  set description(description: string) {
-    this.props.description = description
-
-    this.touch()
   }
 
   get createdAt() {

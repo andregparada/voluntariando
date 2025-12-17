@@ -9,7 +9,6 @@ import { Either, right } from '@/core/either.js'
 import { CausesRepository } from '../repositories/causes-repository.js'
 import { Cause } from '@/domain/enterprise/entities/cause.js'
 import { Skill } from '@/domain/enterprise/entities/skill.js'
-import { Slug } from '@/domain/enterprise/entities/value-objects/slug.js'
 import { SkillsRepository } from '../repositories/skills-repository.js'
 
 interface CreateVolunteerJobUseCaseRequest {
@@ -18,8 +17,8 @@ interface CreateVolunteerJobUseCaseRequest {
   description: string
   causeTitles: string[] // ??? receb ids? recebe Causes? causeTitles?
   skillTitles: string[] // ??? idem
-  jobtype: JobType
-  commitmentFrequenct: CommitmentFrequency
+  jobType: JobType
+  commitmentFrequency: CommitmentFrequency
   startDate?: Date
   endDate?: Date
 }
@@ -44,16 +43,14 @@ export class CreateVolunteerJobUseCase {
     description,
     causeTitles,
     skillTitles,
-    jobtype,
-    commitmentFrequenct,
+    jobType,
+    commitmentFrequency,
     startDate,
     endDate,
   }: CreateVolunteerJobUseCaseRequest): Promise<CreateVolunteerJobUseCaseResponse> {
     const causeIds = await Promise.all(
       causeTitles.map(async (title) => {
-        const slug = Slug.createFromText(title).value
-
-        const existingCause = await this.causesRepository.findBySlug(slug)
+        const existingCause = await this.causesRepository.findByTitle(title)
 
         if (existingCause) {
           return existingCause.id // ??? retornar id
@@ -71,9 +68,7 @@ export class CreateVolunteerJobUseCase {
 
     const skillIds = await Promise.all(
       skillTitles.map(async (title) => {
-        const slug = Slug.createFromText(title).value
-
-        const existingSkill = await this.skillsRepository.findBySlug(slug)
+        const existingSkill = await this.skillsRepository.findByTitle(title)
 
         if (existingSkill) {
           return existingSkill.id
@@ -95,10 +90,10 @@ export class CreateVolunteerJobUseCase {
       description,
       causes: causeIds,
       skillsNeeded: skillIds,
-      jobType: jobtype,
-      commitmentFrequency: commitmentFrequenct,
-      startDate,
-      endDate,
+      jobType,
+      commitmentFrequency,
+      startDate: startDate ?? null,
+      endDate: endDate ?? null,
     })
 
     await this.jobsRepository.create(job)

@@ -2,13 +2,23 @@ import { Either, left, right } from '@/core/either.js'
 import type { JobsRepository } from '../repositories/jobs-repository.js'
 import { ResourceNotFoundError } from './errors/resource-not-found-error.js'
 import { NotAllowedError } from './errors/not-allowed-error.js'
-import { Job } from '@/domain/enterprise/entities/job.js'
+import {
+  CommitmentFrequency,
+  Job,
+  JobType,
+} from '@/domain/enterprise/entities/job.js'
 
 interface EditVolunteerJobUseCaseRequest {
   ongId: string
   jobId: string
-  title: string
-  description: string
+  title?: string
+  description?: string
+  causeTitles: string[]
+  skillTitles: string[]
+  jobType?: JobType
+  commitmentFrequency?: CommitmentFrequency
+  startDate?: Date
+  endDate?: Date
 }
 
 type EditVolunteerJobUseCaseResponse = Either<
@@ -26,6 +36,12 @@ export class EditVolunteerJobUseCase {
     jobId,
     title,
     description,
+    causeTitles,
+    skillTitles,
+    jobType,
+    commitmentFrequency,
+    startDate,
+    endDate,
   }: EditVolunteerJobUseCaseRequest): Promise<EditVolunteerJobUseCaseResponse> {
     const job = await this.jobsRepository.findById(jobId)
 
@@ -37,9 +53,29 @@ export class EditVolunteerJobUseCase {
       return left(new NotAllowedError())
     }
 
-    job.title = title
-    job.description = description
+    if (title !== undefined) {
+      job.title = title
+    }
 
+    if (description !== undefined) {
+      job.description = description
+    }
+
+    if (jobType !== undefined) {
+      job.jobType = jobType
+    }
+
+    if (commitmentFrequency !== undefined) {
+      job.commitmentFrequency = commitmentFrequency
+    }
+
+    if (startDate !== undefined) {
+      job.startDate = startDate
+    }
+
+    if (endDate !== undefined) {
+      job.endDate = endDate
+    }
     await this.jobsRepository.save(job)
 
     return right({
